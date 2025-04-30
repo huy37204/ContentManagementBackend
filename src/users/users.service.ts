@@ -4,13 +4,15 @@ import { User, UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ensureExists } from 'src/common/ultils/ensure-exists';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
+  async create(dto: CreateUserDto): Promise<User> {
+    const hash = await bcrypt.hash(dto.password, 10);
+    const createdUser = new this.userModel({ ...dto, password: hash });
     return createdUser.save();
   }
 
@@ -21,6 +23,10 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     return ensureExists(user, `User with Id ${id} not found`);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({ email }).exec();
   }
 
   async update(id: string, updateDto: Partial<CreateUserDto>): Promise<User> {
