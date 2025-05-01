@@ -5,12 +5,12 @@ import { Request } from 'express';
 import { RedisService } from 'src/common/services/redis.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private readonly redisService: RedisService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
-      passReqToCallback: true, // cần để lấy request trong validate()
+      passReqToCallback: true, // Pass request to validate
     } as StrategyOptionsWithRequest);
   }
 

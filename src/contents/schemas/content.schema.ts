@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { BlockSchema } from './block.schema';
 
 export type ContentDocument = Content & Document;
 
@@ -8,22 +9,11 @@ export class Content {
   @Prop({ required: true })
   title: string;
 
-  @Prop({
-    type: [
-      {
-        type: {
-          type: String,
-          enum: ['text', 'image', 'video'],
-          required: true,
-        },
-        data: { type: String },
-        url: { type: String },
-      },
-    ],
-  })
+  @Prop({ type: [BlockSchema], default: [] })
   blocks: Array<{
     type: 'text' | 'image' | 'video';
-    data?: string;
+    heading?: string;
+    paragraph?: string;
     url?: string;
   }>;
 
@@ -33,5 +23,4 @@ export class Content {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   updatedBy: Types.ObjectId;
 }
-
 export const ContentSchema = SchemaFactory.createForClass(Content);

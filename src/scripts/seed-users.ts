@@ -19,6 +19,21 @@ async function bootstrap() {
       role: 'admin',
     },
     {
+      email: 'admin1@example.com',
+      password: 'admin123',
+      role: 'admin',
+    },
+    {
+      email: 'admin2@example.com',
+      password: 'admin123',
+      role: 'admin',
+    },
+    {
+      email: 'admin3@example.com',
+      password: 'admin123',
+      role: 'admin',
+    },
+    {
       email: 'editor@example.com',
       password: 'editor123',
       role: 'editor',
@@ -41,5 +56,6 @@ async function bootstrap() {
   }
 
   await app.close();
+  process.exit(0);
 }
 bootstrap();

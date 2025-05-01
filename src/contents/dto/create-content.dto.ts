@@ -1,16 +1,6 @@
 import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-
-class BlockDto {
-  @IsString()
-  type: 'text' | 'image' | 'video';
-
-  @IsString()
-  data?: string;
-
-  @IsString()
-  url?: string;
-}
+import { BlockDto } from './block.dto';
 
 export class CreateContentDto {
   @IsString()
@@ -20,5 +10,5 @@ export class CreateContentDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => BlockDto)
-  block: BlockDto[];
+  blocks: BlockDto[];
 }

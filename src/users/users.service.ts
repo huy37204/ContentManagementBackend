@@ -25,7 +25,7 @@ export class UsersService {
     return ensureExists(user, `User with Id ${id} not found`);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
   }
 
