@@ -18,7 +18,11 @@ export class ContentsService {
   }
 
   async findAll(): Promise<IContent[]> {
-    return this.contentModel.find().populate('createdBy').exec();
+    return this.contentModel
+      .find()
+      .populate('createdBy')
+      .populate('updatedBy')
+      .exec();
   }
 
   async findOne(id: string): Promise<IContent> {

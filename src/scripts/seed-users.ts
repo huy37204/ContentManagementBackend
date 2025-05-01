@@ -16,31 +16,37 @@ async function bootstrap() {
     {
       email: 'admin@example.com',
       password: 'admin123',
+      name: 'admin',
       role: 'admin',
     },
     {
       email: 'admin1@example.com',
       password: 'admin123',
+      name: 'admin1',
       role: 'admin',
     },
     {
       email: 'admin2@example.com',
       password: 'admin123',
+      name: 'admin2',
       role: 'admin',
     },
     {
       email: 'admin3@example.com',
       password: 'admin123',
+      name: 'admin3',
       role: 'admin',
     },
     {
       email: 'editor@example.com',
       password: 'editor123',
+      name: 'editor',
       role: 'editor',
     },
     {
       email: 'client@example.com',
       password: 'client123',
+      name: 'client',
       role: 'client',
     },
   ];
