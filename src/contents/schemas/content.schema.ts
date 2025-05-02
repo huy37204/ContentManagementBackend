@@ -12,8 +12,8 @@ export class Content {
   @Prop({ type: [BlockSchema], default: [] })
   blocks: Array<{
     type: 'text' | 'image' | 'video';
-    heading?: string;
-    paragraph?: string;
+    headings?: string[];
+    paragraphs?: string[];
     url?: string;
   }>;
 

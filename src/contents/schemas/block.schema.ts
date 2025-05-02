@@ -3,7 +3,7 @@ import { IBlock } from '../interfaces/block.interface';
 
 export const BlockSchema = new mongoose.Schema<IBlock>({
   type: { type: String, enum: ['text', 'image', 'video'], required: true },
-  heading: String,
-  paragraph: String,
+  headings: [String],
+  paragraphs: [String],
   url: String,
 });

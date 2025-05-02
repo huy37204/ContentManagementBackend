@@ -45,49 +45,45 @@ function getRandom<T>(arr: T[]): T {
 function generateBlocksForTitle(title: string): IBlock[] {
   const blocks: IBlock[] = [];
 
-  const blockCount = Math.floor(Math.random() * 5) + 3; // Từ 3–7 block
+  const blockCount = Math.floor(Math.random() * 5) + 3; // 3–7 blocks
 
-  // Đảm bảo mỗi loại có ít nhất 1
-  const textBlock: IBlock = {
-    type: 'text',
-    heading: getRandom(['Introduction', 'Overview', 'Fact', 'Note']),
-    paragraph: getRandom(sampleParagraphs),
+  const isCat = title.toLowerCase().includes('cat');
+  const isFish = title.toLowerCase().includes('fish');
+
+  const sources = {
+    images: isCat
+      ? catImages
+      : isFish
+        ? fishImages
+        : [...catImages, ...fishImages],
+    videos: isCat
+      ? catVideos
+      : isFish
+        ? [] // fish không có video
+        : catVideos,
   };
 
-  const imageBlock: IBlock = {
-    type: 'image',
-    url: title.toLowerCase().includes('cat')
-      ? getRandom(catImages)
-      : getRandom(fishImages),
-  };
-
-  const videoBlock: IBlock = {
-    type: 'video',
-    url: getRandom(catVideos),
-  };
-
-  blocks.push(textBlock, imageBlock, videoBlock);
-
-  // Tạo thêm block ngẫu nhiên để đủ số lượng
   while (blocks.length < blockCount) {
     const type = getRandom(['text', 'image', 'video']);
+
     if (type === 'text') {
       blocks.push({
         type: 'text',
-        heading: getRandom(['Details', 'Fun Fact', 'About']),
-        paragraph: getRandom(sampleParagraphs),
+        headings: [getRandom(['Intro', 'Fact', 'Note', 'Topic'])],
+        paragraphs: [
+          getRandom(sampleParagraphs),
+          Math.random() > 0.5 ? getRandom(sampleParagraphs) : '',
+        ].filter(Boolean), // tránh đoạn rỗng
       });
     } else if (type === 'image') {
       blocks.push({
         type: 'image',
-        url: title.toLowerCase().includes('cat')
-          ? getRandom(catImages)
-          : getRandom(fishImages),
+        url: getRandom(sources.images),
       });
-    } else {
+    } else if (type === 'video' && sources.videos.length > 0) {
       blocks.push({
         type: 'video',
-        url: getRandom(catVideos),
+        url: getRandom(sources.videos),
       });
     }
   }
