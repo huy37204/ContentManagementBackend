@@ -52,7 +52,7 @@ export class UsersService {
       }
     }
     const updatedUser = await this.userModel
-      .findByIdAndUpdate(id, updateDto, { new: true })
+      .findByIdAndUpdate(id, updateDto, { new: true, timestamps: true })
       .exec();
     return ensureExists(updatedUser, `User with ID ${id} not found to update`);
   }

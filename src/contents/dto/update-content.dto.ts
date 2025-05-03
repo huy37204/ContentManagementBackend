@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer';
 import { BlockDto } from './block.dto';
 
-export class CreateContentDto {
+export class UpdateContentDto {
   @IsString()
   @IsNotEmpty()
   title: string;

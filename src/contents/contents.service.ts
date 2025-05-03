@@ -56,7 +56,7 @@ export class ContentsService {
 
   async update(id: string, dto: Partial<IContent>): Promise<Content> {
     const updatedContent = await this.contentModel
-      .findByIdAndUpdate(id, dto, { new: true })
+      .findByIdAndUpdate(id, dto, { new: true, timestamps: true })
       .exec();
     return ensureExists(
       updatedContent,
