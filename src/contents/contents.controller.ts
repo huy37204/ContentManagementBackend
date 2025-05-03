@@ -25,8 +25,14 @@ export class ContentsController {
   ) {}
 
   @Post()
-  create(@Body() dto: CreateContentDto) {
-    return this.contentsService.create(dto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() dto: CreateContentDto, @Req() req) {
+    return this.contentsService.create({
+      ...dto,
+      status: 'draft',
+      createdBy: req.user.userId,
+      updatedBy: req.user.userId,
+    });
   }
 
   @Get('publish')
@@ -77,5 +83,11 @@ export class ContentsController {
       createdBy: req.user.userId,
       updatedBy: req.user.userId,
     });
+  }
+
+  @Patch(':id/publish')
+  @UseGuards(JwtAuthGuard)
+  async publishContent(@Param('id') id: string, @Req() req) {
+    return this.contentsService.updateStatus(id, 'published', req.user.id);
   }
 }

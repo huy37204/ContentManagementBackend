@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ContentsModule } from './contents/contents.module';
 import { ConfigModule } from '@nestjs/config';
+import { UploadController } from './common/controllers/upload.controller';
+import { S3Service } from './common/services/s3.service';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     ContentsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UploadController],
+  providers: [AppService, S3Service],
 })
 export class AppModule {}

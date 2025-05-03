@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Content, ContentDocument } from './schemas/content.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,7 +15,11 @@ export class ContentsService {
   ) {}
 
   async create(data: Partial<IContent>): Promise<IContent> {
-    const created = new this.contentModel(data);
+    const created = new this.contentModel({
+      ...data,
+      blocks: data.blocks || [],
+      status: data.status || 'draft',
+    });
     try {
       this.contentsGateway.broadcastNewContent(created);
     } catch (e) {
@@ -66,5 +70,20 @@ export class ContentsService {
       deletedContent,
       `Content with Id ${id} not found to deleted`,
     );
+  }
+
+  async updateStatus(
+    id: string,
+    status: 'draft' | 'published',
+    updatedBy: string,
+  ): Promise<IContent> {
+    const content = await this.contentModel
+      .findByIdAndUpdate(id, { status, updatedBy }, { new: true })
+      .exec();
+    if (!content) {
+      throw new NotFoundException(`Content with id ${id} not found`);
+    }
+
+    return content;
   }
 }
