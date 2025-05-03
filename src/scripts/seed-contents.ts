@@ -28,6 +28,25 @@ const sampleParagraphs = [
   'Fusce at metus ut sapien eleifend sollicitudin.',
   'Vivamus nec velit eu purus vestibulum lobortis.',
   'Sed ut perspiciatis unde omnis iste natus error sit voluptatem.',
+  'Maecenas ac massa vitae elit dapibus tincidunt.',
+  'Integer vitae nulla nec purus facilisis convallis.',
+  'Aliquam erat volutpat. Proin tincidunt massa id suscipit aliquet.',
+  'Cras eget sapien sed metus dapibus finibus.',
+  'Nam lacinia sem vel dui fermentum, nec congue nisl euismod.',
+  'Morbi vel purus in odio tincidunt sollicitudin.',
+];
+
+const sampleHeadings = [
+  'Introduction',
+  'Fun Fact',
+  'Background',
+  'Behavior',
+  'Habitat',
+  'Feeding',
+  'Reproduction',
+  'Conservation',
+  'Anatomy',
+  'Interaction with Humans',
 ];
 
 const sampleTitles = [
@@ -40,6 +59,16 @@ const sampleTitles = [
 
 function getRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function getRandomMultiple<T>(arr: T[], count: number): T[] {
+  const copy = [...arr];
+  const result: T[] = [];
+  while (result.length < count && copy.length > 0) {
+    const index = Math.floor(Math.random() * copy.length);
+    result.push(copy.splice(index, 1)[0]);
+  }
+  return result;
 }
 
 function generateBlocksForTitle(title: string): IBlock[] {
@@ -67,13 +96,14 @@ function generateBlocksForTitle(title: string): IBlock[] {
     const type = getRandom(['text', 'image', 'video']);
 
     if (type === 'text') {
+      const headingCount = Math.floor(Math.random() * 3) + 2; // 2–4 headings
+      const headings = getRandomMultiple(sampleHeadings, headingCount);
+      const paragraphs = getRandomMultiple(sampleParagraphs, headingCount);
+
       blocks.push({
         type: 'text',
-        headings: [getRandom(['Intro', 'Fact', 'Note', 'Topic'])],
-        paragraphs: [
-          getRandom(sampleParagraphs),
-          Math.random() > 0.5 ? getRandom(sampleParagraphs) : '',
-        ].filter(Boolean), // tránh đoạn rỗng
+        headings,
+        paragraphs,
       });
     } else if (type === 'image') {
       blocks.push({
@@ -123,6 +153,7 @@ async function bootstrap() {
       blocks,
       createdBy: creator,
       updatedBy: updater,
+      status: 'published' as const,
     };
 
     await contentService.create(content);

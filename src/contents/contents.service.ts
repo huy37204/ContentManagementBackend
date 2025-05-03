@@ -4,17 +4,33 @@ import { Content, ContentDocument } from './schemas/content.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ensureExists } from 'src/common/ultils/ensure-exists';
 import { IContent } from './interfaces/content.interface';
+import { ContentsGateway } from './contents.gateway';
 
 @Injectable()
 export class ContentsService {
   constructor(
     @InjectModel(Content.name)
     private contentModel: Model<ContentDocument>,
+    private readonly contentsGateway: ContentsGateway,
   ) {}
 
   async create(data: Partial<IContent>): Promise<IContent> {
     const created = new this.contentModel(data);
+    try {
+      this.contentsGateway.broadcastNewContent(created);
+    } catch (e) {
+      console.warn('Socket not initialized — skip emit in seed mode.');
+    }
     return created.save();
+  }
+
+  async findAllPublish(): Promise<IContent[]> {
+    return this.contentModel
+      .find({ status: 'published' })
+      .populate('createdBy')
+      .populate('updatedBy')
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
   async findAll(): Promise<IContent[]> {
@@ -26,7 +42,11 @@ export class ContentsService {
   }
 
   async findOne(id: string): Promise<IContent> {
-    const content = await this.contentModel.findById(id).exec();
+    const content = await this.contentModel
+      .findById(id)
+      .populate('createdBy')
+      .populate('updatedBy')
+      .exec();
     return ensureExists(content, `Content with Id ${id} not found`);
   }
 

@@ -29,6 +29,11 @@ export class ContentsController {
     return this.contentsService.create(dto);
   }
 
+  @Get('publish')
+  findAllPublish() {
+    return this.contentsService.findAllPublish();
+  }
+
   @Get()
   findAll() {
     return this.contentsService.findAll();

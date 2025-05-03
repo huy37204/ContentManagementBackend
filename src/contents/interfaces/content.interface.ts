@@ -7,6 +7,7 @@ export interface IContent {
   blocks: IBlock[];
   createdBy: Types.ObjectId;
   updatedBy?: Types.ObjectId;
+  status: 'draft' | 'published';
   createdAt?: Date;
   updatedAt?: Date;
 }

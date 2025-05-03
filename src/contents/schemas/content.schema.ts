@@ -22,5 +22,13 @@ export class Content {
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   updatedBy: Types.ObjectId;
+
+  @Prop({
+    type: String,
+    required: true,
+    enum: ['draft', 'published'],
+    default: 'draft',
+  })
+  status: 'draft' | 'published';
 }
 export const ContentSchema = SchemaFactory.createForClass(Content);
