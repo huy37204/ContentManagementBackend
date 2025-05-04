@@ -110,6 +110,73 @@ npm run build
 npm run start:prod
 ```
 
+## 📬 API Overview
+
+These are the main API endpoints provided by the backend system:
+
+### 🔐 Authentication
+
+| Method | Endpoint       | Description             |
+| ------ | -------------- | ----------------------- |
+| POST   | `/auth/login`  | Authenticate user       |
+| POST   | `/auth/logout` | Logout user             |
+| GET    | `/auth/me`     | Get logged-in user info |
+
+### 📝 Contents
+
+| Method | Endpoint                | Description                 |
+| ------ | ----------------------- | --------------------------- |
+| POST   | `/contents`             | Create new content          |
+| GET    | `/contents`             | Get all contents            |
+| GET    | `/contents/publish`     | Get all published contents  |
+| GET    | `/contents/:id`         | Get content by ID           |
+| GET    | `/contents/:id/publish` | Get published content by ID |
+| PATCH  | `/contents/:id`         | Update content              |
+| DELETE | `/contents/:id`         | Delete content              |
+
+### 👤 Users
+
+| Method | Endpoint     | Description       |
+| ------ | ------------ | ----------------- |
+| GET    | `/users`     | Get all users     |
+| GET    | `/users/:id` | Get user by ID    |
+| PATCH  | `/users/:id` | Update user by ID |
+| DELETE | `/users/:id` | Delete user by ID |
+
+## 🔄 Continuous Integration (CI)
+
+This project uses **GitHub Actions** to automatically build and test the backend on every push to the `main` branch.
+
+### 🛠 Workflow File: `.github/workflows/backend-ci.yml`
+
+```yaml
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+```
+
 ## 📁 Folder Structure
 
 ```bash
