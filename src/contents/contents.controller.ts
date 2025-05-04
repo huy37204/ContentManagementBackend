@@ -13,17 +13,12 @@ import {
 } from '@nestjs/common';
 import { ContentsService } from './contents.service';
 import { CreateContentDto } from './dto/create-content.dto';
-import { S3Service } from 'src/common/services/s3.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateContentDto } from './dto/update-content.dto';
 
 @Controller('contents')
 export class ContentsController {
-  constructor(
-    private readonly contentsService: ContentsService,
-    private readonly s3Service: S3Service,
-  ) {}
+  constructor(private readonly contentsService: ContentsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)

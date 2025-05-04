@@ -143,6 +143,48 @@ These are the main API endpoints provided by the backend system:
 | PATCH  | `/users/:id` | Update user by ID |
 | DELETE | `/users/:id` | Delete user by ID |
 
+## 3. Database Design
+
+### 🧑 User Collection (MongoDB)
+
+Each user document includes:
+
+| Field       | Type     | Description                         |
+| ----------- | -------- | ----------------------------------- |
+| `_id`       | ObjectId | Unique identifier                   |
+| `email`     | String   | User's email                        |
+| `name`      | String   | Full name                           |
+| `password`  | String   | Hashed password                     |
+| `role`      | String   | One of: `admin`, `editor`, `client` |
+| `createdBy` | ObjectId | Reference to creator (Admin)        |
+| `createdAt` | Date     | Timestamp of creation               |
+| `updatedAt` | Date     | Last updated time                   |
+| `updatedBy` | ObjectId | Reference to user who updated       |
+
+---
+
+### 📄 Content Collection
+
+Each content document includes:
+
+| Field       | Type         | Description                         |
+| ----------- | ------------ | ----------------------------------- |
+| `_id`       | ObjectId     | Unique identifier                   |
+| `title`     | String       | Title of the content                |
+| `blocks`    | Array<Block> | Content blocks (text, image, video) |
+| `createdBy` | ObjectId     | User ID who created the content     |
+| `createdAt` | Date         | Timestamp of creation               |
+| `updatedAt` | Date         | Last updated time                   |
+| `updatedBy` | ObjectId     | Reference to last editor            |
+
+#### Content Block Schema:
+
+````ts
+type Block =
+  | { type: "text"; data: string }
+  | { type: "image"; data: string } // S3/DigitalOcean URL
+  | { type: "video"; data: string }; // Link or upload
+
 ## 🔄 Continuous Integration (CI)
 
 This project uses **GitHub Actions** to automatically build and test the backend on every push to the `main` branch.
@@ -175,7 +217,7 @@ jobs:
 
       - name: Run tests
         run: npm run test
-```
+````
 
 ## 📁 Folder Structure
 

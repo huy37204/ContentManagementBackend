@@ -12,13 +12,23 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const userService = app.get(UsersService);
 
-  const users: CreateUserDto[] = [
-    {
-      email: 'admin@example.com',
+  const adminEmail = 'admin@example.com';
+  const admin = await userService.findByEmail(adminEmail);
+
+  if (!admin) {
+    // Tạo admin trước nếu chưa có
+    const newAdmin = await userService.create({
+      email: adminEmail,
       password: 'admin123',
       name: 'admin',
       role: 'admin',
-    },
+    });
+    console.log(`✅ Created admin: ${adminEmail}`);
+  }
+
+  const adminUser = await userService.findByEmail(adminEmail);
+
+  const users: CreateUserDto[] = [
     {
       email: 'admin1@example.com',
       password: 'admin123',
@@ -29,12 +39,6 @@ async function bootstrap() {
       email: 'admin2@example.com',
       password: 'admin123',
       name: 'admin2',
-      role: 'admin',
-    },
-    {
-      email: 'admin3@example.com',
-      password: 'admin123',
-      name: 'admin3',
       role: 'admin',
     },
     {
@@ -54,7 +58,11 @@ async function bootstrap() {
   for (const user of users) {
     const exists = await userService.findByEmail(user.email);
     if (!exists) {
-      await userService.create(user);
+      await userService.create({
+        ...user,
+        createdBy: adminUser!._id.toString(),
+        updatedBy: adminUser!._id.toString(),
+      });
       console.log(`✅ Created user: ${user.email}`);
     } else {
       console.log(`⚠️  User already exists: ${user.email}`);
