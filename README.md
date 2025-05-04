@@ -181,9 +181,9 @@ Each content document includes:
 
 ````ts
 type Block =
-  | { type: "text"; data: string }
-  | { type: "image"; data: string } // S3/DigitalOcean URL
-  | { type: "video"; data: string }; // Link or upload
+  | { type: "text"; _id: string; headings: string[]; paragraphs: string[] }
+  | { type: "image"; _id: string; url: string } // S3
+  | { type: "video"; _id: string; url: string }; // S3
 
 ## 🔄 Continuous Integration (CI)
 
