@@ -179,11 +179,12 @@ Each content document includes:
 
 #### Content Block Schema:
 
-````ts
+```ts
 type Block =
-  | { type: "text"; _id: string; headings: string[]; paragraphs: string[] }
-  | { type: "image"; _id: string; url: string } // S3
-  | { type: "video"; _id: string; url: string }; // S3
+  | { type: 'text'; _id: string; headings: string[]; paragraphs: string[] }
+  | { type: 'image'; _id: string; url: string } // S3
+  | { type: 'video'; _id: string; url: string }; // S3
+```
 
 ## 🔄 Continuous Integration (CI)
 
@@ -217,7 +218,7 @@ jobs:
 
       - name: Run tests
         run: npm run test
-````
+```
 
 ## 📁 Folder Structure
 
