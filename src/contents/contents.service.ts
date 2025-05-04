@@ -20,11 +20,6 @@ export class ContentsService {
       blocks: data.blocks || [],
       status: data.status || 'draft',
     });
-    try {
-      this.contentsGateway.broadcastNewContent(created);
-    } catch (e) {
-      console.warn('Socket not initialized — skip emit in seed mode.');
-    }
     return created.save();
   }
 
@@ -54,22 +49,42 @@ export class ContentsService {
     return ensureExists(content, `Content with Id ${id} not found`);
   }
 
+  async findOnePublish(id: string): Promise<IContent> {
+    const content = await this.contentModel
+      .findOne({ _id: id, status: 'published' })
+      .populate('createdBy')
+      .populate('updatedBy')
+      .exec();
+    return ensureExists(content, `Content with Id ${id} not found`);
+  }
+
   async update(id: string, dto: Partial<IContent>): Promise<Content> {
     const updatedContent = await this.contentModel
-      .findByIdAndUpdate(id, dto, { new: true, timestamps: true })
+      .findByIdAndUpdate(id, dto, { new: true })
       .exec();
-    return ensureExists(
+
+    const content = ensureExists(
       updatedContent,
-      `Content with Id ${id} not found to updated`,
+      `Content with Id ${id} not found to update`,
     );
+
+    if (dto.status === 'draft') {
+      this.contentsGateway.broadcastHideContent(content.id.toString());
+    }
+
+    return content;
   }
 
   async delete(id: string): Promise<IContent> {
     const deletedContent = await this.contentModel.findByIdAndDelete(id).exec();
-    return ensureExists(
+    const content = ensureExists(
       deletedContent,
       `Content with Id ${id} not found to deleted`,
     );
+    if (content.id) {
+      this.contentsGateway.broadcastHideContent(content.id.toString());
+    }
+    return content;
   }
 
   async updateStatus(
@@ -83,7 +98,13 @@ export class ContentsService {
     if (!content) {
       throw new NotFoundException(`Content with id ${id} not found`);
     }
-
+    if (content.status === 'published') {
+      try {
+        this.contentsGateway.broadcastNewContent(content);
+      } catch (e) {
+        console.warn('Socket not initialized — skip.');
+      }
+    }
     return content;
   }
 }

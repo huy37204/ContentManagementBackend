@@ -14,4 +14,8 @@ export class ContentsGateway {
   broadcastNewContent(content: Content) {
     this.server.emit('new_content', content);
   }
+
+  broadcastHideContent(contentId: string) {
+    this.server.emit('hide_content', { id: contentId });
+  }
 }

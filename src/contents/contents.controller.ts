@@ -51,6 +51,11 @@ export class ContentsController {
     return this.contentsService.findOne(id);
   }
 
+  @Get(':id/publish')
+  findOnePublish(@Param('id') id: string) {
+    return this.contentsService.findOnePublish(id);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -60,7 +65,7 @@ export class ContentsController {
   ) {
     const updateDto = {
       ...dto,
-      status: (dto.status as 'draft' | 'published') || 'draft',
+      status: 'draft' as 'draft',
       updatedBy: req.user.userId,
     };
     return this.contentsService.update(id, updateDto);
