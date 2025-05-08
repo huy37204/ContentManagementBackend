@@ -1,4 +1,4 @@
-name: Deploy to Droplet
+name: Deploy Backend to Droplet
 
 on:
   push:
@@ -13,13 +13,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Droplet
+      - name: Setup SSH Key and Permissions
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: huytran3.workspace.opstech.org
-          SSH_USER: root
         run: |
-          echo "$SSH_KEY" > key.pem
+          echo "$SSH_KEY" | sed 's/\\n/\n/g' > key.pem
           chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem -r ./* $SSH_USER@$SSH_HOST:/var/www/backend
-          ssh -i key.pem $SSH_USER@$SSH_HOST "cd /var/www/backend && ./deploy.sh"
+
+      - name: Sync Backend to Droplet
+        env:
+          SSH_HOST: huytran3.workspace.opstech.org
+          SSH_USER: alsp
+        run: |
+          rsync -avz --exclude='node_modules' --exclude='.git' --exclude='.github' \
+          -e "ssh -o StrictHostKeyChecking=no -i key.pem" ./ $SSH_USER@$SSH_HOST:/var/www/backend
+
+      - name: Run Deploy Script for Backend
+        env:
+          SSH_HOST: huytran3.workspace.opstech.org
+          SSH_USER: alsp
+        run: |
+          ssh -i key.pem $SSH_USER@$SSH_HOST "
+            cd /var/www/backend &&
+            chmod +x deploy.sh &&
+            ./deploy.sh
+          "
